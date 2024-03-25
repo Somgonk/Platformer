@@ -8,7 +8,8 @@ project("platformer" VERSION 0.1)
 add_subdirectory("lib/glfw")
 add_subdirectory("lib/bgfx.cmake")
 
+
 add_executable("platformer" "src/main.cpp")
 target_include_directories(platformer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-target_link_libraries(platformer glfw)
+target_link_libraries(platformer glfw bgfx bx bimg)
 
