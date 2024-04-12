@@ -6,6 +6,11 @@ void Window::glfw_errorCallback(int error, const char *description) {
 
 void Window::glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
   cout << "Key pressed: " << key << endl;
+  if (action == GLFW_PRESS) {
+    keyStates[key] = true;
+  } else if (action == GLFW_RELEASE) {
+    keyStates[key] = false;
+  }
 }
 
 void Window::glfw_resizeCallback(GLFWwindow *window, int width, int height) {
@@ -15,11 +20,10 @@ void Window::glfw_resizeCallback(GLFWwindow *window, int width, int height) {
   glfwGetWindowSize(window, &width, &height);
   if (width != oldWidth || height != oldHeight) {
     bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
-    bgfx::setViewRect(view, 0, 0, bgfx::BackbufferRatio::Equal);
   }
 }
 
-
+bool Window::keyStates [GLFW_KEY_LAST + 1] = {false};
 
 Window::Window() {
   // inits glfw
@@ -50,18 +54,14 @@ Window::Window() {
 
   glfwGetWindowSize(window, &width, &height);
   
-  bgfxInit.resolution.width = (uint32_t)width;
-  bgfxInit.resolution.height = (uint32_t)height;
+  bgfxInit.resolution.width = (uint32_t)width * 3;
+  bgfxInit.resolution.height = (uint32_t)height * 3;
   bgfxInit.resolution.reset = BGFX_RESET_VSYNC;
 
   if (!bgfx::init(bgfxInit)) {
     fail = 1;
     return;
-  }
-  
-  bgfx::setViewClear(view, BGFX_CLEAR_COLOR);
-  bgfx::setViewRect(view, 0, 0, bgfx::BackbufferRatio::Equal);
-
+  } 
 }
 
 

@@ -7,6 +7,7 @@
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <GLFW/glfw3.h>
+#include <bitset>
 
 #if BX_PLATFORM_LINUX
   #define GLFW_EXPOSE_NATIVE_X11
@@ -28,15 +29,13 @@ class Window {
     GLFWwindow *window;
     int width;
     int height;
-
-    // bgfx variables
-    const static bgfx::ViewId view = 0;
-
+    
+    static bool keyStates[GLFW_KEY_LAST + 1]; 
 
   private:
     static void glfw_errorCallback(int error, const char *description);
     static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
     static void glfw_resizeCallback(GLFWwindow *window, int width, int height);
-};
+  };
 
 #endif

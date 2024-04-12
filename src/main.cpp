@@ -8,83 +8,53 @@
 #include <glm/glm/vec2.hpp>
 
 #include "window.h"
-#include "generated/shaders/all.h"
+#include "rendering.h"
 
 using namespace std;
 
-
-static const bgfx::EmbeddedShader kEmbeddedShaders[] =
-        {
-                BGFX_EMBEDDED_SHADER(vs_basic),
-                BGFX_EMBEDDED_SHADER(fs_basic),
-                BGFX_EMBEDDED_SHADER_END()
-        };
-
-struct NormalColorVertex
-{
-  glm::vec2 position;
-  uint32_t color;
+vector<ColorVertex> v1 {
+  {-0.5f, -0.5f, 0xffffffff},
+  {0.5f, -0.5f, 0xffffffff},
+  {0.0f, 0.5f, 0xffffffff},
+  {1.0f, 0.0f, 0x00fffff}
 };
-
-
+vector<uint16_t> i1 {
+  0, 1, 2,
+  3, 2, 1
+};
+vector<ColorVertex> v2 {
+  {-1.0f, 1.0f, 0xff00ff00},
+  {-1.0f, 0.0f, 0x00ff00ff},
+  {0.0f, 0.0f, 0x0f0f0f0f}
+};
+vector<uint16_t> i2 {
+  0, 1, 2
+};
 
 
 int main() {
   Window window;
- 
-
-  NormalColorVertex kTriangleVertices[] =
-            {
-                    {{-0.5f, -0.5f}, 0xffffffff},
-                    {{0.5f, -0.5f}, 0xffffffff},
-                    {{0.0f, 0.5f}, 0xffffffff},
-            };
-
-    const uint16_t kTriangleIndices[] =
-            {
-                    0, 1, 2, 
-            };
-
-    bgfx::VertexLayout color_vertex_layout;
-    color_vertex_layout.begin()
-                       .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-                       .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-                       .end();
-
-    bgfx::VertexBufferHandle vertex_buffer = bgfx::createVertexBuffer(bgfx::makeRef(kTriangleVertices, sizeof(kTriangleVertices)), color_vertex_layout);
-    bgfx::IndexBufferHandle index_buffer = bgfx::createIndexBuffer(bgfx::makeRef(kTriangleIndices, sizeof(kTriangleIndices)));
-
-    bgfx::RendererType::Enum renderer_type = bgfx::getRendererType();
-    bgfx::ProgramHandle program = bgfx::createProgram(
-            bgfx::createEmbeddedShader(kEmbeddedShaders, renderer_type, "vs_basic"),
-            bgfx::createEmbeddedShader(kEmbeddedShaders, renderer_type, "fs_basic"),
-            true
-    );
-
-
+  View view;
+  Layer layer1(window, v1, i1);
+  Layer layer2(window, v2, i2);
+  view.AddLayer(layer1);
+  view.AddLayer(layer2);
   while (!glfwWindowShouldClose(window.window)) {
 		glfwPollEvents();
-
-    bgfx::setViewRect(window.view, 0, 0, bgfx::BackbufferRatio::Equal);
-    bgfx::setViewClear(window.view, BGFX_CLEAR_COLOR, 0x0000ff00);
-
-    bgfx::touch(window.view);
+        // Update game
+    if (window.keyStates[GLFW_KEY_A]) {
+      v1.at(0).x_pos -= 0.01;
+    }
+    if (window.keyStates[GLFW_KEY_D]) {
+      v1.at(0).x_pos += 0.01;
+    }
+    layer1.UpdateVertexBuffer(v1);
+    // Update graphics
+    view.Submit();
     
-    bgfx::setState(
-                BGFX_STATE_WRITE_R
-                        | BGFX_STATE_WRITE_G
-                        | BGFX_STATE_WRITE_B
-                        | BGFX_STATE_WRITE_A
-        );
-
-        bgfx::setVertexBuffer(0, vertex_buffer);
-        bgfx::setIndexBuffer(index_buffer);
-        bgfx::submit(window.view, program);
-
     bgfx::frame();
 
   }
-
   bgfx::shutdown();
 	glfwTerminate();
 
