@@ -20,14 +20,24 @@ struct ColorVertex {
 class Layer {
   public:
     //Layer(Window window, vector<ColorVertex> &vertices, vector<uint16_t> &indices);
-    Layer(Window window, vector<ColorVertex> &vertices, vector<uint16_t> &indices);
-    void UpdateVertexBuffer(vector<ColorVertex> &vertices);
+    Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices, double xScale = 0, double yScale = 0);
+    void SetScaleFactor(double xScale, double yScale);
+    void UpdateGeometry(vector<ColorVertex> &vertices);
+    void UpdateGeometry(vector<uint16_t> &indices);
+    void UpdateGeometry(vector<ColorVertex> &vertices, vector<uint16_t> &indices);
     void Draw(bgfx::ViewId view);
+    
 
     vector<ColorVertex> vertices;
     vector<uint16_t> indices;
 
-  private: 
+    double xScale = 1;
+    double yScale = 1;
+
+  private:
+    // Scales vertices stored in class
+    void ScaleVertices(double xScale, double yScale);
+
     // Buffers
     bgfx::DynamicVertexBufferHandle vertexBuffer;
     bgfx::DynamicIndexBufferHandle indexBuffer;

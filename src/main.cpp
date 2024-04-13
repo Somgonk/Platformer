@@ -5,22 +5,22 @@
 #include <bgfx/platform.h>
 #include <GLFW/glfw3.h>
 #include <vector>
-#include <glm/glm/vec2.hpp>
 
 #include "window.h"
 #include "rendering.h"
+#include "level.h"
 
 using namespace std;
-
 vector<ColorVertex> v1 {
   {-0.5f, -0.5f, 0xffffffff},
   {0.5f, -0.5f, 0xffffffff},
-  {0.0f, 0.5f, 0xffffffff},
-  {1.0f, 0.0f, 0x00fffff}
+  {0.5f, 0.5f, 0xffffffff},
+  {-0.5f, 0.5f, 0x00fffff}
 };
 vector<uint16_t> i1 {
   0, 1, 2,
-  3, 2, 1
+  2, 3, 0
+
 };
 vector<ColorVertex> v2 {
   {-1.0f, 1.0f, 0xff00ff00},
@@ -35,20 +35,42 @@ vector<uint16_t> i2 {
 int main() {
   Window window;
   View view;
-  Layer layer1(window, v1, i1);
-  Layer layer2(window, v2, i2);
+  Layer layer1(v1, i1, window.xScale, window.yScale);
+  Layer layer2(v2, i2, window.xScale, window.yScale);
+
   view.AddLayer(layer1);
   view.AddLayer(layer2);
+
+  view.UpdateScaleFactor(window.xScale, window.yScale);
+
+  //Level level("../levels/test.lf");
+
+  double lastTime = glfwGetTime();
   while (!glfwWindowShouldClose(window.window)) {
+    //Calculate Deltatime
+    double currentTime = glfwGetTime();
+    double deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
+
 		glfwPollEvents();
+    if (window.HandleResize()) {
+      window.UpdateScale();
+            
+      view.UpdateScaleFactor(window.xScale, window.yScale);
+    }
         // Update game
     if (window.keyStates[GLFW_KEY_A]) {
-      v1.at(0).x_pos -= 0.01;
+      v1.at(0).x_pos -= 0.1 * deltaTime;
+      layer1.UpdateGeometry(v1);
+
     }
     if (window.keyStates[GLFW_KEY_D]) {
-      v1.at(0).x_pos += 0.01;
+      v1.at(0).x_pos += 0.1 * deltaTime;
+      layer1.UpdateGeometry(v1);
+
     }
-    layer1.UpdateVertexBuffer(v1);
+
     // Update graphics
     view.Submit();
     

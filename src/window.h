@@ -19,23 +19,27 @@
 
 #include <GLFW/glfw3native.h>
 
+
 using namespace std;
 class Window {
   public:
     Window();
+    bool HandleResize();
+    void UpdateScale();
     int fail;
 
     // glfw variables
     GLFWwindow *window;
     int width;
     int height;
-    
+    double xScale;
+    double yScale;
+
     static bool keyStates[GLFW_KEY_LAST + 1]; 
 
   private:
     static void glfw_errorCallback(int error, const char *description);
     static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
-    static void glfw_resizeCallback(GLFWwindow *window, int width, int height);
   };
 
 #endif

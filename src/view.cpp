@@ -13,7 +13,7 @@ void View::AddLayer(Layer layer) {
 
 void View::Submit() {
   bgfx::setViewRect(view, 0, 0, bgfx::BackbufferRatio::Equal);
-  bgfx::setViewClear(view, BGFX_CLEAR_COLOR);
+  bgfx::setViewClear(view, BGFX_CLEAR_COLOR, 0xdddddddd, 1.0f);
 
   bgfx::touch(view);
 
@@ -28,4 +28,10 @@ void View::Submit() {
     layers.at(i).Draw(view);
   }
 
+}
+
+void View::UpdateScaleFactor(double xScale, double yScale) {
+  for (int i = 0; i < layers.size(); i++) {
+    layers.at(i).SetScaleFactor(xScale, yScale);
+  } 
 }

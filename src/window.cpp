@@ -13,14 +13,17 @@ void Window::glfw_keyCallback(GLFWwindow *window, int key, int scancode, int act
   }
 }
 
-void Window::glfw_resizeCallback(GLFWwindow *window, int width, int height) {
-  cout << "Resize occured:\n Width: " << width << "\n Height: " << height << endl;
+
+bool Window::HandleResize() {
   int oldWidth = width;
   int oldHeight = height;
   glfwGetWindowSize(window, &width, &height);
   if (width != oldWidth || height != oldHeight) {
     bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
+    UpdateScale(); 
+    return true;
   }
+  return false;
 }
 
 bool Window::keyStates [GLFW_KEY_LAST + 1] = {false};
@@ -33,10 +36,8 @@ Window::Window() {
   }
   glfwSetErrorCallback(glfw_errorCallback);
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  window = glfwCreateWindow(1024, 768, "Platformer", nullptr, nullptr);
-
+  window = glfwCreateWindow(750, 750, "Platformer", nullptr, nullptr);
   glfwSetKeyCallback(window, glfw_keyCallback);
-  glfwSetWindowSizeCallback(window, glfw_resizeCallback);
 
   // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
   bgfx::renderFrame();
@@ -53,7 +54,9 @@ Window::Window() {
 #endif
 
   glfwGetWindowSize(window, &width, &height);
-  
+
+  UpdateScale();
+
   bgfxInit.resolution.width = (uint32_t)width * 3;
   bgfxInit.resolution.height = (uint32_t)height * 3;
   bgfxInit.resolution.reset = BGFX_RESET_VSYNC;
@@ -64,5 +67,14 @@ Window::Window() {
   } 
 }
 
+void Window::UpdateScale() {
+  if (width > height) {
+    xScale = (height * 1.0) / width;
+    yScale = 1.0;
+  } else {
+    xScale = 1.0;
+    yScale = (width * 1.0) / height;
+  }
+}
 
 
