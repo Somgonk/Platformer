@@ -30,8 +30,3 @@ void View::Submit() {
 
 }
 
-void View::UpdateScaleFactor(double xScale, double yScale) {
-  for (int i = 0; i < layers.size(); i++) {
-    layers.at(i).SetScaleFactor(xScale, yScale);
-  } 
-}

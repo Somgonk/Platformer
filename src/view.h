@@ -14,8 +14,7 @@ class View {
     View();
     void AddLayer(Layer layer);
     void Submit();
-    void UpdateScaleFactor(double xScale, double yScale);
-    
+        
     static bgfx::ViewId nextViewId;
   private:
     bgfx::ViewId view;

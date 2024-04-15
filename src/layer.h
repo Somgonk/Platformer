@@ -20,8 +20,7 @@ struct ColorVertex {
 class Layer {
   public:
     //Layer(Window window, vector<ColorVertex> &vertices, vector<uint16_t> &indices);
-    Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices, double xScale = 0, double yScale = 0);
-    void SetScaleFactor(double xScale, double yScale);
+    Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices);
     void UpdateGeometry(vector<ColorVertex> &vertices);
     void UpdateGeometry(vector<uint16_t> &indices);
     void UpdateGeometry(vector<ColorVertex> &vertices, vector<uint16_t> &indices);
@@ -31,13 +30,7 @@ class Layer {
     vector<ColorVertex> vertices;
     vector<uint16_t> indices;
 
-    double xScale = 1;
-    double yScale = 1;
-
   private:
-    // Scales vertices stored in class
-    void ScaleVertices(double xScale, double yScale);
-
     // Buffers
     bgfx::DynamicVertexBufferHandle vertexBuffer;
     bgfx::DynamicIndexBufferHandle indexBuffer;

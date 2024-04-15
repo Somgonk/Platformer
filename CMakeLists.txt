@@ -18,12 +18,10 @@ add_subdirectory("3rdparty/bgfx.cmake")
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
-
-
+add_shaders_directory(${CMAKE_CURRENT_SOURCE_DIR}/shaders ${CMAKE_CURRENT_SOURCE_DIR}/runtime)
 
 
 add_executable(platformer ${SRC_FILES})
-add_shaders_directory(${CMAKE_CURRENT_SOURCE_DIR}/shaders ${CMAKE_CURRENT_SOURCE_DIR}/runtime)
 target_include_directories(platformer PRIVATE 
   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty 
   ${CMAKE_CURRENT_SOURCE_DIR}/include

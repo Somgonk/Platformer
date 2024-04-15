@@ -20,7 +20,6 @@ bool Window::HandleResize() {
   glfwGetWindowSize(window, &width, &height);
   if (width != oldWidth || height != oldHeight) {
     bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
-    UpdateScale(); 
     return true;
   }
   return false;
@@ -55,7 +54,6 @@ Window::Window() {
 
   glfwGetWindowSize(window, &width, &height);
 
-  UpdateScale();
 
   bgfxInit.resolution.width = (uint32_t)width * 3;
   bgfxInit.resolution.height = (uint32_t)height * 3;
@@ -67,14 +65,6 @@ Window::Window() {
   } 
 }
 
-void Window::UpdateScale() {
-  if (width > height) {
-    xScale = (height * 1.0) / width;
-    yScale = 1.0;
-  } else {
-    xScale = 1.0;
-    yScale = (width * 1.0) / height;
-  }
-}
+
 
 

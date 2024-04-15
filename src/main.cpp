@@ -35,13 +35,14 @@ vector<uint16_t> i2 {
 int main() {
   Window window;
   View view;
-  Layer layer1(v1, i1, window.xScale, window.yScale);
-  Layer layer2(v2, i2, window.xScale, window.yScale);
+  //Layer layer1(v1, i1, window.xScale, window.yScale);
+  Layer layer1(v1, i1);
+
+  //Layer layer2(v2, i2, window.xScale, window.yScale);
 
   view.AddLayer(layer1);
-  view.AddLayer(layer2);
+  //view.AddLayer(layer2);
 
-  view.UpdateScaleFactor(window.xScale, window.yScale);
 
   //Level level("../levels/test.lf");
 
@@ -54,24 +55,18 @@ int main() {
 
 
 		glfwPollEvents();
-    if (window.HandleResize()) {
-      window.UpdateScale();
-            
-      view.UpdateScaleFactor(window.xScale, window.yScale);
-    }
-        // Update game
+    window.HandleResize();
+    // Update game
     if (window.keyStates[GLFW_KEY_A]) {
       v1.at(0).x_pos -= 0.1 * deltaTime;
       layer1.UpdateGeometry(v1);
-
     }
     if (window.keyStates[GLFW_KEY_D]) {
       v1.at(0).x_pos += 0.1 * deltaTime;
       layer1.UpdateGeometry(v1);
 
     }
-
-    // Update graphics
+        // Update graphics
     view.Submit();
     
     bgfx::frame();

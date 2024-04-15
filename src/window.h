@@ -25,7 +25,6 @@ class Window {
   public:
     Window();
     bool HandleResize();
-    void UpdateScale();
     int fail;
 
     // glfw variables

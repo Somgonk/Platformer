@@ -8,8 +8,9 @@ const bgfx::EmbeddedShader shaders[3] = {
 };
 
 
-Layer::Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices, double xScale, double yScale) {
+Layer::Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices) {
   this->vertices = vertices;
+
   
   colorVertexLayout.begin()
                      .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
@@ -31,8 +32,7 @@ Layer::Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices, double xS
 
 void Layer::UpdateGeometry(vector<ColorVertex> &vertices) {
   this->vertices.clear();
-  this->vertices = vertices; 
-  ScaleVertices(xScale, yScale); 
+  this->vertices = vertices;
   bgfx::update(vertexBuffer, 0, bgfx::makeRef(this->vertices.data(), sizeof(ColorVertex) * this->vertices.size()));
 }
 void Layer::UpdateGeometry(vector<uint16_t> &indices) {
@@ -45,27 +45,6 @@ void Layer::UpdateGeometry(vector<ColorVertex> &vertices, vector<uint16_t> &indi
   UpdateGeometry(indices);
 }
 
-void Layer::SetScaleFactor(double xScale, double yScale) {
-  double oldXScale = this->xScale;
-  double oldYScale = this->yScale;
-  this->xScale = xScale;
-  this->yScale = yScale;
-
-  double xScaleAmount = this->xScale / oldXScale;
-  double yScaleAmount = this->yScale / oldYScale;
-  
-  ScaleVertices(xScaleAmount, yScaleAmount);
-
-  bgfx::update(vertexBuffer, 0, bgfx::makeRef(this->vertices.data(), sizeof(ColorVertex) * this->vertices.size()));
-
-}
-
-void Layer::ScaleVertices(double xScale, double yScale) {
-  for (int i = 0; i < this->vertices.size(); i++) {
-    this->vertices.at(i).x_pos *= xScale;
-    this->vertices.at(i).y_pos *= yScale;
-  }
-}
 
 void Layer::Draw(bgfx::ViewId view) {
   bgfx::setVertexBuffer(0, vertexBuffer);
