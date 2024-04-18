@@ -21,15 +21,12 @@ class Layer {
   public:
     //Layer(Window window, vector<ColorVertex> &vertices, vector<uint16_t> &indices);
     Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices);
+    Layer();
     void UpdateGeometry(vector<ColorVertex> &vertices);
     void UpdateGeometry(vector<uint16_t> &indices);
     void UpdateGeometry(vector<ColorVertex> &vertices, vector<uint16_t> &indices);
     void Draw(bgfx::ViewId view);
     
-
-    vector<ColorVertex> vertices;
-    vector<uint16_t> indices;
-
   private:
     // Buffers
     bgfx::DynamicVertexBufferHandle vertexBuffer;
@@ -38,6 +35,10 @@ class Layer {
     // Others
     bgfx::ProgramHandle program;
     bgfx::VertexLayout colorVertexLayout;
+
+    vector<ColorVertex> vertices;
+    vector<uint16_t> indices;
+
 };
 
 #endif

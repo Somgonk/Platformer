@@ -5,7 +5,7 @@ void Window::glfw_errorCallback(int error, const char *description) {
 }
 
 void Window::glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-  cout << "Key pressed: " << key << endl;
+  //cout << "Key pressed: " << key << endl;
   if (action == GLFW_PRESS) {
     keyStates[key] = true;
   } else if (action == GLFW_RELEASE) {

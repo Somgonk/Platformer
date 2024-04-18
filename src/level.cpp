@@ -10,8 +10,9 @@
  * map (ex. 1 0 0
  *          1 1 1 
  *          0 1 0)
- * 
  */
+
+
 
 
 Level::Level(string filename) {
@@ -25,7 +26,59 @@ Level::Level(string filename) {
 }
 
 void Level::UpdateGeometry() {
+  if (map.size() == 0) {
+    return;
+  }
+  tileSize = 2.0 / max(width, height);
+  offsetX = 0;
+  offsetY = 0;
+
+  if (width > height) {
+    offsetY = ((width - height) * tileSize) / 2;
+  }
+  if (height > width) {
+    offsetX = ((height - width) * tileSize) / 2;
+  }
+
+  cout << "Tile size: " << tileSize << endl;
   
+  vector<ColorVertex> currentVertices {
+    {-1.0f + offsetX, 1.0f - offsetY, 0x55555555},
+    {-1.0f + tileSize + offsetX, 1.0f - offsetY, 0x55555555},
+    {-1.0f + tileSize + offsetX, 1.0f - tileSize - offsetY, 0x55555555},
+    {-1.0f + offsetX, 1.0f - tileSize - offsetY, 0x55555555}
+  };
+
+  vector<uint16_t> currentIndices {
+    0, 1, 2,
+    3, 2, 0
+  };
+
+  this->vertices.clear();
+  this->indices.clear();
+
+  for (int y = 0; y < map.size(); y++) {
+    for (int x = 0; x < map.at(0).size(); x++) {
+      //cout << map.at(y).at(x) << " ";
+      if (map.at(y).at(x) == 1) {
+        for (int i = 0; i < currentVertices.size(); i++) {
+          this->vertices.push_back(currentVertices.at(i));
+        }
+        for (int i = 0; i < currentIndices.size(); i++) {
+          this->indices.push_back(currentIndices.at(i));
+          currentIndices.at(i) += currentVertices.size();
+        }
+      }
+      for (int i = 0; i < currentVertices.size(); i++) {
+        currentVertices.at(i).x_pos += tileSize;
+      }
+    }
+    for (int i = 0; i < currentVertices.size(); i++) {
+      currentVertices.at(i).y_pos -= tileSize;
+      currentVertices.at(i).x_pos -= (tileSize * width);
+    }
+    //cout << endl;
+  }
 }
 
 void Level::ParseLevelFile() {
@@ -36,20 +89,37 @@ void Level::ParseLevelFile() {
   levelFS >> bestTime;
 
   //Populates map vector
-  for(int row = 0; row < height; row++) {
-    vector<int> currentRow;
-    for (int col = 0; col < width; col++) {
+  vector<int> currentRow;
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
       int currentTile;
       levelFS >> currentTile;
       currentRow.push_back(currentTile);
-      cout << currentTile << endl;
+      if (levelFS.fail()) {
+        cout << "Read Failiure: ( x: " << x << ", y: " << y << " )" << endl;
+      }
     }
-    map.push_back(currentRow);
+    this->map.push_back(currentRow);
+    currentRow.clear();
   }
+  cout << "Map size: " << map.at(0).size() << " x " << map.size() << endl;
+
   if (levelFS.fail()) {
+    cout << "Level load error" << endl;
     error = 1;
-    map.clear();
     return;
+  }
+}
+
+void Level::SetLayer(Layer *layer) {
+  this->layer = layer;
+  
+  UpdateGeometry();
+
+  if (this->vertices.size() != 0 && this->indices.size() != 0) {
+    this->layer->UpdateGeometry(this->vertices, this->indices);
+  } else {
+    cout << "No data in vertices or indices vectors" << endl;
   }
 }
 
@@ -58,4 +128,12 @@ bool Level::fail() {
     return true;
   }
   return false;
+}
+
+vector<bool> Level::CalculateCollisions(float x, float y) {
+
+  // Up down left right
+  vector<bool> collisions (4, false);
+
+  return collisions;
 }

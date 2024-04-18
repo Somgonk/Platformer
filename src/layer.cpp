@@ -17,8 +17,16 @@ Layer::Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices) {
                      .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
                      .end();
   
-  vertexBuffer = bgfx::createDynamicVertexBuffer(bgfx::makeRef(this->vertices.data(), sizeof(ColorVertex) * this->vertices.size()), colorVertexLayout);
-  indexBuffer = bgfx::createDynamicIndexBuffer(bgfx::makeRef(indices.data(), sizeof(uint16_t) * indices.size()));
+  vertexBuffer = bgfx::createDynamicVertexBuffer(
+      bgfx::makeRef(this->vertices.data(), sizeof(ColorVertex) * this->vertices.size()), 
+      colorVertexLayout, 
+      BGFX_BUFFER_ALLOW_RESIZE
+    );
+  indexBuffer = bgfx::createDynamicIndexBuffer(
+      bgfx::makeRef(indices.data(), 
+        sizeof(uint16_t) * indices.size()), 
+      BGFX_BUFFER_ALLOW_RESIZE
+    );
 
   bgfx::RendererType::Enum renderer_type = bgfx::getRendererType();
   program = bgfx::createProgram(
@@ -26,7 +34,23 @@ Layer::Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices) {
     bgfx::createEmbeddedShader(shaders, renderer_type, "fs_basic"),
     true
   );
+}
+
+Layer::Layer() {
+  colorVertexLayout.begin()
+                     .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
+                     .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+                     .end();
   
+  vertexBuffer = bgfx::createDynamicVertexBuffer(1, colorVertexLayout, BGFX_BUFFER_ALLOW_RESIZE);
+  indexBuffer = bgfx::createDynamicIndexBuffer(1, BGFX_BUFFER_ALLOW_RESIZE);
+
+  bgfx::RendererType::Enum renderer_type = bgfx::getRendererType();
+  program = bgfx::createProgram(
+    bgfx::createEmbeddedShader(shaders, renderer_type, "vs_basic"),
+    bgfx::createEmbeddedShader(shaders, renderer_type, "fs_basic"),
+    true
+  );
 
 }
 
