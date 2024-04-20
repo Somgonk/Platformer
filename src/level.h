@@ -7,6 +7,7 @@
 #include <fstream>
 
 #include "layer.h"
+#include "coordinates.h"
 
 using namespace std;
 
@@ -22,7 +23,6 @@ class Level {
     vector<uint16_t> indices;
 
     // Gameplay
-    vector<bool> CalculateCollisions(float x, float y);
 
   private:
     void ParseLevelFile();
@@ -39,8 +39,7 @@ class Level {
 
     float tileSize;
 
-    float offsetX = 0;
-    float offsetY = 0;
+    CoordinatePair offset = {0, 0};
 
     int attempts;
     double bestTime;

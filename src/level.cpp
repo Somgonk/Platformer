@@ -30,23 +30,22 @@ void Level::UpdateGeometry() {
     return;
   }
   tileSize = 2.0 / max(width, height);
-  offsetX = 0;
-  offsetY = 0;
+
 
   if (width > height) {
-    offsetY = ((width - height) * tileSize) / 2;
+    offset.y = ((width - height) * tileSize) / 2;
   }
   if (height > width) {
-    offsetX = ((height - width) * tileSize) / 2;
+    offset.x = ((height - width) * tileSize) / 2;
   }
 
   cout << "Tile size: " << tileSize << endl;
   
   vector<ColorVertex> currentVertices {
-    {-1.0f + offsetX, 1.0f - offsetY, 0x55555555},
-    {-1.0f + tileSize + offsetX, 1.0f - offsetY, 0x55555555},
-    {-1.0f + tileSize + offsetX, 1.0f - tileSize - offsetY, 0x55555555},
-    {-1.0f + offsetX, 1.0f - tileSize - offsetY, 0x55555555}
+    {-1.0f + offset.x, 1.0f - offset.y, 0x55555555},
+    {-1.0f + tileSize + offset.x, 1.0f - offset.y, 0x55555555},
+    {-1.0f + tileSize + offset.x, 1.0f - tileSize - offset.y, 0x55555555},
+    {-1.0f + offset.x, 1.0f - tileSize - offset.y, 0x55555555}
   };
 
   vector<uint16_t> currentIndices {
@@ -130,10 +129,3 @@ bool Level::fail() {
   return false;
 }
 
-vector<bool> Level::CalculateCollisions(float x, float y) {
-
-  // Up down left right
-  vector<bool> collisions (4, false);
-
-  return collisions;
-}

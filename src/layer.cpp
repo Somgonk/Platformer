@@ -23,8 +23,7 @@ Layer::Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices) {
       BGFX_BUFFER_ALLOW_RESIZE
     );
   indexBuffer = bgfx::createDynamicIndexBuffer(
-      bgfx::makeRef(indices.data(), 
-        sizeof(uint16_t) * indices.size()), 
+      bgfx::makeRef(indices.data(), sizeof(uint16_t) * indices.size()), 
       BGFX_BUFFER_ALLOW_RESIZE
     );
 
