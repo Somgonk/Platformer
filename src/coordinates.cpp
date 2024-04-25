@@ -1,5 +1,9 @@
 #include "coordinates.h"
 
+void CoordinatePair::OutputCoords() {
+  cout << "( x: " << this->x << ", y: " << this->y << " )" << endl;
+}
+
 CoordinatePair CoordinatePair::operator+(CoordinatePair rhs) {
   CoordinatePair result;
 

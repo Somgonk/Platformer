@@ -28,7 +28,7 @@ int main() {
   Level level("../levels/test.lf");
   level.SetLayer(&layer2);
 
-  Player player(0.2);
+  Player player(&level);
   player.SetLayer(&playerLayer);
 
   double lastTime = glfwGetTime();
@@ -43,11 +43,19 @@ int main() {
     window.HandleResize();
     // Update game
     if (window.keyStates[GLFW_KEY_A]) {
-      player.ChangeVelocity({0.1, 0});
+      player.ChangeVelocity({-0.2, 0});
     }
     if (window.keyStates[GLFW_KEY_D]) {
-      player.ChangeVelocity({-0.1, 0});
+      player.ChangeVelocity({0.2, 0});
     }
+    if (window.keyStates[GLFW_KEY_W]) {
+      player.ChangeVelocity({0, 0.2});
+    }
+    if (window.keyStates[GLFW_KEY_S]) {
+      player.ChangeVelocity({0, -0.2});
+    }
+
+
     player.UpdateVelocity(deltaTime);
     player.UpdatePosition(deltaTime);
     // Update graphics

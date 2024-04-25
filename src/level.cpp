@@ -129,3 +129,31 @@ bool Level::fail() {
   return false;
 }
 
+CoordinatePair Level::PosToIndex(CoordinatePair pos) {
+  CoordinatePair index;
+
+  index.x = (int)round(((pos.x + 1 + tileSize / 2) / 2) * (width - 1) * (1 + 1.0 / ( width - 1)) - 1);
+  index.y = height - (int)round(((pos.y + 1 + tileSize / 2) / 2) * (height - 1) * (1 + 1.0 / (height - 1)));
+
+
+  if (index.x == -0 || index.x < 0) index.x = 0;
+  if (index.y == -0 || index.x < 0) index.y = 0;
+  if (index.x > width - 1) index.x = width - 1;
+  if (index.y > height - 1) index.y = height - 1;
+  /* 
+  cout << "Pos:  ( x: " << pos.x << ", y: " << pos.y << " )" << endl;
+  cout << "Index:( x: " << index.x << ", y: " << index.y << " )" << endl;
+  */
+  return index;
+  
+}
+int Level::GetMapData(int x, int y) {
+  return map[y][x];
+}
+int Level::GetMapData(CoordinatePair pos) {
+  return map[pos.y][pos.x];
+}
+
+int Level::PosToData(CoordinatePair pos) {
+  return GetMapData(PosToIndex(pos));
+}

@@ -18,12 +18,19 @@ class Level {
     void SetLayer(Layer *layer);
     bool fail();
 
+    int width;
+    int height;
+
     // Level Geometry
     vector<ColorVertex> vertices;
     vector<uint16_t> indices;
+    float tileSize;
 
     // Gameplay
-
+    CoordinatePair PosToIndex(CoordinatePair pos);
+    int GetMapData(int x, int y);
+    int GetMapData(CoordinatePair pos);
+    int PosToData(CoordinatePair pos);
   private:
     void ParseLevelFile();
 
@@ -34,10 +41,9 @@ class Level {
 
     // Level Data
     string name;
-    int width;
-    int height;
 
-    float tileSize;
+
+
 
     CoordinatePair offset = {0, 0};
 
