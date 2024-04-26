@@ -62,67 +62,72 @@ CoordinatePair Player::CorrectCollision(CoordinatePair playerPos) {
   CoordinatePair offset = {0,0};
   float halfPlayer = size / 2;
   float tileSize = level->tileSize;
-  while (IsColliding(playerPos)) {
-    vector<CoordinatePair> corners {
-      (playerPos + (CoordinatePair){halfPlayer, halfPlayer}),
-      (playerPos + (CoordinatePair){halfPlayer, -halfPlayer}),
-      (playerPos + (CoordinatePair){-halfPlayer, -halfPlayer}),
-      (playerPos + (CoordinatePair){-halfPlayer, halfPlayer}),
-    };
-    if (level->PosToData(corners.at(0)) == 1) {
-      // Top Right Collision
-      CoordinatePair tileIndex = level->PosToIndex(corners.at(0));
-      CoordinatePair tilePos = {tileIndex.x * tileSize - 1, (tileIndex.y + 1) * tileSize - 1};
-      CoordinatePair overlap = {abs(corners.at(0).x - tilePos.x), abs(corners.at(0).y + tilePos.y)};
-      if (overlap.x < overlap.y) {
-        offset.x -= overlap.x; 
-        velocity.x = 0;
-      } else {
-        offset.y -= overlap.y;
-        velocity.y = 0;
-      }
+
+  bool groundCheck = false;
+
+  CoordinatePair scale {0, 0};
+
+  vector<CoordinatePair> corners {
+    (playerPos + (CoordinatePair){halfPlayer, halfPlayer}),
+    (playerPos + (CoordinatePair){halfPlayer, -halfPlayer}),
+    (playerPos + (CoordinatePair){-halfPlayer, -halfPlayer}),
+    (playerPos + (CoordinatePair){-halfPlayer, halfPlayer}),
+  };
+  if (level->PosToData(corners.at(0)) == 1) {
+    // Top Right Collision
+    CoordinatePair tileIndex = level->PosToIndex(corners.at(0));
+    CoordinatePair tilePos = {tileIndex.x * tileSize - 1, (tileIndex.y + 1) * tileSize - 1};
+    CoordinatePair overlap = {abs(corners.at(0).x - tilePos.x), abs(corners.at(0).y + tilePos.y)};
+    if (overlap.x < overlap.y) {
+      offset.x -= overlap.x; 
+      velocity.x = 0;
+    } else {
+      offset.y -= overlap.y;
+      velocity.y = 0;
     }
-    if (level->PosToData(corners.at(1)) == 1) {
-      // Bottom Right Collision
-      CoordinatePair tileIndex = level->PosToIndex(corners.at(1));
-      CoordinatePair tilePos = {tileIndex.x * tileSize - 1, tileIndex.y * tileSize - 1};
-      CoordinatePair overlap = {abs(corners.at(1).x - tilePos.x), abs(corners.at(1).y + tilePos.y)};
-      if (overlap.x < overlap.y) {
-        offset.x -= overlap.x; 
-        velocity.x = 0;
-      } else {
-        offset.y += overlap.y;
-        velocity.y = 0;
-      }
-    }
-    if (level->PosToData(corners.at(2)) == 1) {
-      // Bottom Left Collision
-      CoordinatePair tileIndex = level->PosToIndex(corners.at(2));
-      CoordinatePair tilePos = {(tileIndex.x + 1) * tileSize - 1, tileIndex.y * tileSize - 1};
-      CoordinatePair overlap = {abs(corners.at(2).x - tilePos.x), abs(corners.at(2).y + tilePos.y)};
-      if (overlap.x < overlap.y) {
-        offset.x += overlap.x; 
-        velocity.x = 0;
-      } else {
-        offset.y += overlap.y;
-        velocity.y = 0;
-      }
-    }
-    if (level->PosToData(corners.at(3)) == 1) {
-      // Top Left Collision
-      CoordinatePair tileIndex = level->PosToIndex(corners.at(2));
-      CoordinatePair tilePos = {(tileIndex.x + 1) * tileSize - 1, (tileIndex.y + 1) * tileSize - 1};
-      CoordinatePair overlap = {abs(corners.at(2).x - tilePos.x), abs(corners.at(2).y + tilePos.y)};
-      if (overlap.x < overlap.y) {
-        offset.x += overlap.x; 
-        velocity.x = 0;
-      } else {
-        offset.y -= overlap.y;
-        velocity.y = 0;
-      }
-    }
-    break;
   }
+  if (level->PosToData(corners.at(1)) == 1) {
+    // Bottom Right Collision
+    CoordinatePair tileIndex = level->PosToIndex(corners.at(1));
+    CoordinatePair tilePos = {tileIndex.x * tileSize - 1, tileIndex.y * tileSize - 1};
+    CoordinatePair overlap = {abs(corners.at(1).x - tilePos.x), abs(corners.at(1).y + tilePos.y)};
+    if (overlap.x < overlap.y) {
+      offset.x -= overlap.x; 
+      velocity.x = 0;
+    } else {
+      offset.y += overlap.y;
+      velocity.y = 0;
+      groundCheck = true;
+    }
+  }
+  if (level->PosToData(corners.at(2)) == 1) {
+    // Bottom Left Collision
+    CoordinatePair tileIndex = level->PosToIndex(corners.at(2));
+    CoordinatePair tilePos = {(tileIndex.x + 1) * tileSize - 1, tileIndex.y * tileSize - 1};
+    CoordinatePair overlap = {abs(corners.at(2).x - tilePos.x), abs(corners.at(2).y + tilePos.y)};
+    if (overlap.x < overlap.y) {
+      offset.x += overlap.x; 
+      velocity.x = 0;
+    } else {
+      offset.y += overlap.y;
+      velocity.y = 0;
+      groundCheck = true;
+    }
+  }
+  if (level->PosToData(corners.at(3)) == 1) {
+    // Top Left Collision
+    CoordinatePair tileIndex = level->PosToIndex(corners.at(2));
+    CoordinatePair tilePos = {(tileIndex.x + 1) * tileSize - 1, (tileIndex.y + 1) * tileSize - 1};
+    CoordinatePair overlap = {abs(corners.at(2).x - tilePos.x), abs(corners.at(2).y + tilePos.y)};
+    if (overlap.x < overlap.y) {
+      offset.x += overlap.x; 
+      velocity.x = 0;
+    } else {
+      offset.y -= overlap.y;
+      velocity.y = 0;
+    }
+  }
+  this->onGround = groundCheck;
   return offset;
 }
 
@@ -157,9 +162,9 @@ void Player::UpdateVelocity(float deltaTime) {
     velocity.x *= 0.98;
   }
   if (velocity.y > 0) {
-    velocity.y *= 0.98;
+    velocity.y -= 0.1;
   } else if (velocity.y < 0) {
-    velocity.y *= 0.98;
+    velocity.y -= 0.1;
   }
 
   if (velocity.x > 0 && abs(velocity.x) > maxVel) {
@@ -168,12 +173,7 @@ void Player::UpdateVelocity(float deltaTime) {
   if (velocity.x < 0 && abs(velocity.x) > maxVel) {
     velocity.x = 0 - maxVel;
   }
-  if (velocity.y > 0 && abs(velocity.y) > maxVel) {
-    velocity.y = maxVel;
-  }
-  if (velocity.y < 0 && abs(velocity.y) > maxVel) {
-    velocity.y = 0 - maxVel;
-  }
+
   // gravity
   if (onGround == false) {
     velocity.y -= 0.05;

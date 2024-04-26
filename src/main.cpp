@@ -43,18 +43,16 @@ int main() {
     window.HandleResize();
     // Update game
     if (window.keyStates[GLFW_KEY_A]) {
-      player.ChangeVelocity({-0.2, 0});
+      player.ChangeVelocity({-0.5, 0});
     }
     if (window.keyStates[GLFW_KEY_D]) {
-      player.ChangeVelocity({0.2, 0});
+      player.ChangeVelocity({0.5, 0});
     }
     if (window.keyStates[GLFW_KEY_W]) {
-      player.ChangeVelocity({0, 0.2});
+      if (player.onGround) {
+        player.ChangeVelocity({0, 12});
+      }
     }
-    if (window.keyStates[GLFW_KEY_S]) {
-      player.ChangeVelocity({0, -0.2});
-    }
-
 
     player.UpdateVelocity(deltaTime);
     player.UpdatePosition(deltaTime);

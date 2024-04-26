@@ -23,14 +23,14 @@ class Player {
 
     void UpdateGeometry();
     CoordinatePair pos;
+    bool onGround = true;
 
   private:
     CoordinatePair velocity;
-    float maxVel = 0.74;
+    float maxVel = 5;
     float size;
 
-    bool onGround = true;
-    
+        
     Layer *layer;
     Level *level;
     vector<ColorVertex> vertices;
