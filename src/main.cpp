@@ -13,6 +13,14 @@
 
 using namespace std;
 
+vector<string> levels {
+  "../levels/1.lf",
+  "../levels/2.lf",
+  "../levels/3.lf",
+  "../levels/4.lf",
+  "../levels/5.lf"
+};
+
 int main() {
   Window window;
   View view;
@@ -25,10 +33,12 @@ int main() {
   view.AddLayer(layer2);
   view.AddLayer(playerLayer);
 
-  Level level("../levels/test.lf");
-  level.SetLayer(&layer2);
+  int levelNumber = 0;
 
-  Player player(&level);
+  Level *level = new Level(levels.at(levelNumber));
+  level->SetLayer(&layer2);
+
+  Player player(level);
   player.SetLayer(&playerLayer);
 
   double lastTime = glfwGetTime();
@@ -54,8 +64,22 @@ int main() {
       }
     }
 
+
     player.UpdateVelocity(deltaTime);
     player.UpdatePosition(deltaTime);
+
+    if (player.nextLevel) {
+      levelNumber++;
+      if (levelNumber < levels.size()) {
+        level = new Level(levels.at(levelNumber)); 
+        level->SetLayer(&layer2);
+        player.SetLevel(level);
+        player.nextLevel = false;
+      } else {
+        cout << "You win!!" << endl;
+      }
+    }
+
     // Update graphics
     view.Submit();
     

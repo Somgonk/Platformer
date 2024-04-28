@@ -5,7 +5,7 @@
  * ------------
  * levelName
  * width height
- * attempts(default 0) best_time(default -1)
+ * attempts 
  * 
  * map (ex. 1 0 0
  *          1 1 1 
@@ -13,9 +13,17 @@
  */
 
 
+const vector<uint32_t> Level::colors {
+  0xdddddddd,
+  0x55555555,
+  0x0000dd00,
+  0xffff5500,
+  0x000077ff
+};
 
 
 Level::Level(string filename) {
+  this->filename = filename;
   levelFS.open(filename);
   if (!levelFS.is_open()) {
     error = 1;
@@ -23,6 +31,13 @@ Level::Level(string filename) {
   }
 
   ParseLevelFile();
+  NextAttempt();
+}
+
+Level::~Level() {
+  levelFS.close();
+  vertices.clear();
+  indices.clear();
 }
 
 void Level::UpdateGeometry() {
@@ -31,7 +46,6 @@ void Level::UpdateGeometry() {
   }
   tileSize = 2.0 / max(width, height);
 
-
   if (width > height) {
     offset.y = ((width - height) * tileSize) / 2;
   }
@@ -39,13 +53,13 @@ void Level::UpdateGeometry() {
     offset.x = ((height - width) * tileSize) / 2;
   }
 
-  cout << "Tile size: " << tileSize << endl;
+  //cout << "Tile size: " << tileSize << endl;
   
   vector<ColorVertex> currentVertices {
-    {-1.0f + offset.x, 1.0f - offset.y, 0x55555555},
-    {-1.0f + tileSize + offset.x, 1.0f - offset.y, 0x55555555},
-    {-1.0f + tileSize + offset.x, 1.0f - tileSize - offset.y, 0x55555555},
-    {-1.0f + offset.x, 1.0f - tileSize - offset.y, 0x55555555}
+    {-1.0f + offset.x, 1.0f - offset.y, colors.at(1)},
+    {-1.0f + tileSize + offset.x, 1.0f - offset.y, colors.at(1)},
+    {-1.0f + tileSize + offset.x, 1.0f - tileSize - offset.y, colors.at(1)},
+    {-1.0f + offset.x, 1.0f - tileSize - offset.y, colors.at(1)}
   };
 
   vector<uint16_t> currentIndices {
@@ -59,7 +73,13 @@ void Level::UpdateGeometry() {
   for (int y = 0; y < map.size(); y++) {
     for (int x = 0; x < map.at(0).size(); x++) {
       //cout << map.at(y).at(x) << " ";
-      if (map.at(y).at(x) == 1) {
+      if (map.at(y).at(x) != 0) {
+        if (map.at(y).at(x) == 2) {
+          startingPoint = {(x - width / 2.0f) * tileSize + tileSize / 2, -((y - height / 2.0f) * tileSize + tileSize / 2)};
+        }
+        for (int i = 0; i < currentVertices.size(); i++) {
+          currentVertices.at(i).color = colors.at(map.at(y).at(x));
+        }
         for (int i = 0; i < currentVertices.size(); i++) {
           this->vertices.push_back(currentVertices.at(i));
         }
@@ -85,7 +105,8 @@ void Level::ParseLevelFile() {
   levelFS >> width;
   levelFS >> height;
   levelFS >> attempts;
-  levelFS >> bestTime;
+
+  cout << name << endl;
 
   //Populates map vector
   vector<int> currentRow;
@@ -101,13 +122,14 @@ void Level::ParseLevelFile() {
     this->map.push_back(currentRow);
     currentRow.clear();
   }
-  cout << "Map size: " << map.at(0).size() << " x " << map.size() << endl;
+  //cout << "Map size: " << map.at(0).size() << " x " << map.size() << endl;
 
   if (levelFS.fail()) {
     cout << "Level load error" << endl;
     error = 1;
     return;
   }
+  levelFS.close();
 }
 
 void Level::SetLayer(Layer *layer) {
@@ -157,3 +179,37 @@ int Level::GetMapData(CoordinatePair pos) {
 int Level::PosToData(CoordinatePair pos) {
   return GetMapData(PosToIndex(pos));
 }
+
+void Level::CompletedLevel() {
+  WriteLevelFile();
+}
+
+void Level::NextAttempt() {
+  attempts++;
+  cout << "Attempt " << attempts << endl;
+}
+
+void Level::WriteLevelFile() {
+  ofstream outFS;
+  outFS.open(filename);
+
+  if (!outFS.is_open()) {
+    cout << "file write error" << endl;
+  }
+
+  //Clears file
+  outFS << "";
+ 
+  outFS << name << "\n";
+  outFS << width << " " << height << "\n";
+  outFS << attempts << "\n\n";
+
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      outFS << map.at(y).at(x) << " ";
+    }
+    outFS << "\n";
+  }
+  outFS.close();
+}
+

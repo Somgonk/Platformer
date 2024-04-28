@@ -10,6 +10,7 @@
 class Player {
   public:
     Player(Level *level);
+    void SetLevel(Level *level);
     void SetLayer(Layer *layer);
     void SetSize(float size);
 
@@ -24,12 +25,15 @@ class Player {
     void UpdateGeometry();
     CoordinatePair pos;
     bool onGround = true;
+    bool nextLevel = false;
 
   private:
     CoordinatePair velocity;
     float maxVel = 5;
     float size;
 
+    bool CheckWin(CoordinatePair playerPos);
+    bool CheckDeath(CoordinatePair playerPos);
         
     Layer *layer;
     Level *level;

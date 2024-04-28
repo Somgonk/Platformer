@@ -68,10 +68,9 @@ void Layer::UpdateGeometry(vector<ColorVertex> &vertices, vector<uint16_t> &indi
   UpdateGeometry(indices);
 }
 
-
 void Layer::Draw(bgfx::ViewId view) {
-  bgfx::setVertexBuffer(0, vertexBuffer);
-  bgfx::setIndexBuffer(indexBuffer);
-  bgfx::submit(view, program);
+    bgfx::setVertexBuffer(0, vertexBuffer);
+    bgfx::setIndexBuffer(indexBuffer);
+    bgfx::submit(view, program);
 }
 

@@ -14,6 +14,7 @@ using namespace std;
 class Level {
   public:
     Level(string filename);
+    ~Level();
     void UpdateGeometry();
     void SetLayer(Layer *layer);
     bool fail();
@@ -31,24 +32,30 @@ class Level {
     int GetMapData(int x, int y);
     int GetMapData(CoordinatePair pos);
     int PosToData(CoordinatePair pos);
+    void CompletedLevel();
+    void NextAttempt();
+    
+    CoordinatePair startingPoint;
+
   private:
+    static const vector<uint32_t> colors; 
     void ParseLevelFile();
+    void WriteLevelFile();
 
     int error;
     ifstream levelFS;
+    string filename;
+    vector<string> files;
+    int currentLevel;
 
     Layer *layer;
 
     // Level Data
     string name;
 
-
-
-
     CoordinatePair offset = {0, 0};
 
     int attempts;
-    double bestTime;
 
     vector<vector<int>> map;
     

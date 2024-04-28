@@ -1,27 +1,42 @@
 #include "player.h"
 
+uint32_t playerColor = 0xffff00ff;
+
 Player::Player(Level *level) {
   this->level = level;
   this->size = (*level).tileSize;
-  this->pos = {0, 0};
+  this->pos = level->startingPoint;
   this->velocity = {0, 0};
   this->vertices = {
-    {0 - (size / 2), 0 - (size / 2), 0xff0000ff},
-    {0 + (size / 2), 0 - (size / 2), 0xff0000ff},
-    {0 + (size / 2), 0 + (size / 2), 0xff0000ff},
-    {0 - (size / 2), 0 + (size / 2), 0xff0000ff}
+    {pos.x - (size / 2), pos.y - (size / 2), playerColor},
+    {pos.x + (size / 2), pos.y - (size / 2), playerColor},
+    {pos.x + (size / 2), pos.y + (size / 2), playerColor},
+    {pos.x - (size / 2), pos.y + (size / 2), playerColor}
   };
   this->indices = {
     0, 1, 2,
     2, 3, 0
   };
 }
+void Player::SetLevel(Level *level) {
+  this->level = level;
+  this->size = (*level).tileSize;
+  this->pos = level->startingPoint;
+  this->vertices = {
+    {pos.x - (size / 2), pos.y - (size / 2), playerColor},
+    {pos.x + (size / 2), pos.y - (size / 2), playerColor},
+    {pos.x + (size / 2), pos.y + (size / 2), playerColor},
+    {pos.x - (size / 2), pos.y + (size / 2), playerColor}
+  };
+
+  this->velocity = {0, 0};
+}
 void Player::SetSize(float size) {
   this->vertices = {
-    {pos.x - (size / 2), pos.y - (size / 2), 0xff0000ff},
-    {pos.x + (size / 2), pos.y - (size / 2), 0xff0000ff},
-    {pos.x + (size / 2), pos.y + (size / 2), 0xff0000ff},
-    {pos.x - (size / 2), pos.y + (size / 2), 0xff0000ff}
+    {pos.x - (size / 2), pos.y - (size / 2), playerColor},
+    {pos.x + (size / 2), pos.y - (size / 2), playerColor},
+    {pos.x + (size / 2), pos.y + (size / 2), playerColor},
+    {pos.x - (size / 2), pos.y + (size / 2), playerColor}
   };
   UpdateGeometry();
 }
@@ -139,9 +154,13 @@ void Player::UpdatePosition(float deltaTime) {
   CoordinatePair newPos = pos + posChange;
   
   newPos = newPos + CorrectCollision(newPos);
+  
+  if (CheckDeath(newPos)) {
+    level->NextAttempt();
+    newPos = level->startingPoint;
+  }
 
-
-
+  CheckWin(newPos);
   SetPosition(newPos);
   UpdateGeometry();
 }
@@ -153,18 +172,70 @@ void Player::ChangeVelocity(CoordinatePair velocityChange) {
   this->velocity.x = this->velocity.x + velocityChange.x;
   this->velocity.y = this->velocity.y + velocityChange.y;
 }
+
+bool Player::CheckWin(CoordinatePair playerPos) {
+  if (nextLevel) return false;
+  float halfPlayer = size / 2;
+  vector<CoordinatePair> corners {
+    (playerPos + (CoordinatePair){halfPlayer, halfPlayer}),
+    (playerPos + (CoordinatePair){halfPlayer, -halfPlayer}),
+    (playerPos + (CoordinatePair){-halfPlayer, -halfPlayer}),
+    (playerPos + (CoordinatePair){-halfPlayer, halfPlayer}),
+  };
+  if (level->PosToData(playerPos) == 3) {
+    nextLevel = true;
+    level->CompletedLevel();
+    return true;
+  }
+  for (int i = 0; i < corners.size(); i++) {
+    if (level->PosToData(corners.at(i)) == 3) {
+      nextLevel = true;
+      level->CompletedLevel();
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Player::CheckDeath(CoordinatePair playerPos) {
+  float halfPlayer = size / 2;
+  vector<CoordinatePair> corners {
+    (playerPos + (CoordinatePair){halfPlayer, halfPlayer}),
+    (playerPos + (CoordinatePair){halfPlayer, -halfPlayer}),
+    (playerPos + (CoordinatePair){-halfPlayer, -halfPlayer}),
+    (playerPos + (CoordinatePair){-halfPlayer, halfPlayer}),
+  };
+  if (level->PosToData(playerPos) == 4) {
+    return true;
+  }
+  /*
+  if ((level->PosToData(corners.at(1)) == 4 && level->PosToData(corners.at(2)) == 4) ||
+      (level->PosToData(corners.at(1)) == 4 && level->PosToData(corners.at(2)) == 4) ||
+      (level->PosToData(corners.at(1)) == 4 && level->PosToData(corners.at(2)) == 4) ||
+      (level->PosToData(corners.at(1)) == 4 && level->PosToData(corners.at(2)) == 4)) {
+    return true;
+  }
+  */
+  for (int i = 0; i < corners.size(); i++) {
+    if (level->PosToData(corners.at(i)) == 4) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void Player::UpdateVelocity(float deltaTime) {
   
   // friction
   if (velocity.x > 0) {
-    velocity.x *= 0.98;
+    velocity.x *= 0.90;
   } else if (velocity.x < 0) {
-    velocity.x *= 0.98;
+    velocity.x *= 0.90;
   }
   if (velocity.y > 0) {
-    velocity.y -= 0.1;
+    velocity.y -= 0.3;
   } else if (velocity.y < 0) {
-    velocity.y -= 0.1;
+    velocity.y -= 0.3;
   }
 
   if (velocity.x > 0 && abs(velocity.x) > maxVel) {
