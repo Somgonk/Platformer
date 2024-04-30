@@ -100,6 +100,7 @@ void Level::UpdateGeometry() {
   }
 }
 
+// Requirement 6: File Input
 void Level::ParseLevelFile() {
   getline(levelFS, name);
   levelFS >> width;
@@ -116,7 +117,7 @@ void Level::ParseLevelFile() {
       levelFS >> currentTile;
       currentRow.push_back(currentTile);
       if (levelFS.fail()) {
-        cout << "Read Failiure: ( x: " << x << ", y: " << y << " )" << endl;
+        cout << "Read Failure: ( x: " << x << ", y: " << y << " )" << endl;
       }
     }
     this->map.push_back(currentRow);
@@ -189,12 +190,14 @@ void Level::NextAttempt() {
   cout << "Attempt " << attempts << endl;
 }
 
+//Requirement 6: File Output
 void Level::WriteLevelFile() {
   ofstream outFS;
   outFS.open(filename);
 
   if (!outFS.is_open()) {
     cout << "file write error" << endl;
+    return;
   }
 
   //Clears file

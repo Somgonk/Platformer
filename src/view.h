@@ -11,11 +11,11 @@ using namespace std;
 
 class View {
   public: 
-    View();
-    void AddLayer(Layer layer);
-    void Submit();
+    View(); // Constructor
+    void AddLayer(Layer layer); // Appends a layer to layers
+    void Submit(); // Submits layers to rendering
         
-    static bgfx::ViewId nextViewId;
+    static bgfx::ViewId nextViewId; // For varying view ids 
   private:
     bgfx::ViewId view;
     vector<Layer> layers;

@@ -9,20 +9,20 @@
 
 class Player {
   public:
-    Player(Level *level);
-    void SetLevel(Level *level);
-    void SetLayer(Layer *layer);
-    void SetSize(float size);
+    Player(Level *level); // Constructor
+    void SetLevel(Level *level); // Sets the level for the player to interact with
+    void SetLayer(Layer *layer); // Sets the layer for the player to be rendered to
+    void SetSize(float size); // Sets the size of the player
 
     // Position
-    void SetPosition(CoordinatePair newPos);
+    void SetPosition(CoordinatePair newPos); // Sets the player's position and updates screen
     void UpdatePosition(float deltaTime); // Uses velocity values to update position
     // Velocity
-    void SetVelocity(CoordinatePair newVelocity);
-    void ChangeVelocity(CoordinatePair velocityChange);
-    void UpdateVelocity(float deltaTime);
+    void SetVelocity(CoordinatePair newVelocity); // Sets the player's velocity
+    void ChangeVelocity(CoordinatePair velocityChange); // Changes the player's velocity
+    void UpdateVelocity(float deltaTime); // Changes the player's velocity by 
 
-    void UpdateGeometry();
+    void UpdateGeometry(); // Updates the player's layer
     CoordinatePair pos;
     bool onGround = true;
     bool nextLevel = false;
@@ -32,16 +32,16 @@ class Player {
     float maxVel = 5;
     float size;
 
-    bool CheckWin(CoordinatePair playerPos);
-    bool CheckDeath(CoordinatePair playerPos);
+    bool CheckWin(CoordinatePair playerPos); // Checks if player is touching a win tile
+    bool CheckDeath(CoordinatePair playerPos); // Checks if player is touching a death tile
         
     Layer *layer;
     Level *level;
     vector<ColorVertex> vertices;
     vector<uint16_t> indices;
 
-    bool IsColliding(CoordinatePair playerPos);
-    CoordinatePair CorrectCollision(CoordinatePair playerPos);
+    bool IsColliding(CoordinatePair playerPos); // Checks if player is colliding with a tile
+    CoordinatePair CorrectCollision(CoordinatePair playerPos); // Outputs the coordinate offsets required to stop collision
 };
 
 #endif

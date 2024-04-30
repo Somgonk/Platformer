@@ -11,8 +11,9 @@ class CoordinatePair {
     float x;
     float y;
 
-    void OutputCoords();
+    void OutputCoords(); // Outputs in form of ( x: $x, y: $y )
 
+    // CoordinatePair operations
     CoordinatePair operator+(CoordinatePair rhs);
     CoordinatePair operator+(double rhs);
 

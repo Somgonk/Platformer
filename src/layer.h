@@ -19,13 +19,12 @@ struct ColorVertex {
 
 class Layer {
   public:
-    //Layer(Window window, vector<ColorVertex> &vertices, vector<uint16_t> &indices);
-    Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices);
-    Layer();
-    void UpdateGeometry(vector<ColorVertex> &vertices);
-    void UpdateGeometry(vector<uint16_t> &indices);
-    void UpdateGeometry(vector<ColorVertex> &vertices, vector<uint16_t> &indices);
-    void Draw(bgfx::ViewId view);
+    Layer(vector<ColorVertex> &vertices, vector<uint16_t> &indices); // Layer constructor with existing geometry
+    Layer(); // Empty layer constructor
+    void UpdateGeometry(vector<ColorVertex> &vertices); // Updates the layer's vertex buffer
+    void UpdateGeometry(vector<uint16_t> &indices); // Updates the layer's index buffer
+    void UpdateGeometry(vector<ColorVertex> &vertices, vector<uint16_t> &indices); // Updates all of the layer's buffers
+    void Draw(bgfx::ViewId view); // Submits buffers for rendering
     
   private:
     // Buffers

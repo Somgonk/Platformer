@@ -4,6 +4,7 @@ void Window::glfw_errorCallback(int error, const char *description) {
   cout << "Uh oh! It's a glfw error!\n" << description << endl;
 }
 
+// Requirement 8: Interaction
 void Window::glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
   //cout << "Key pressed: " << key << endl;
   if (action == GLFW_PRESS) {

@@ -24,7 +24,7 @@ using namespace std;
 class Window {
   public:
     Window();
-    bool HandleResize();
+    bool HandleResize(); // Handles window resize
     int fail;
 
     // glfw variables
@@ -34,11 +34,11 @@ class Window {
     double xScale;
     double yScale;
 
-    static bool keyStates[GLFW_KEY_LAST + 1]; 
+    static bool keyStates[GLFW_KEY_LAST + 1]; // Holds keystates (pressed / not pressed)
 
   private:
-    static void glfw_errorCallback(int error, const char *description);
-    static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+    static void glfw_errorCallback(int error, const char *description); // GLFW error callback function
+    static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods); // GLFW callback for when key pressed
   };
 
 #endif

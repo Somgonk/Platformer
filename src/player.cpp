@@ -57,30 +57,29 @@ void Player::SetPosition(CoordinatePair newPos) {
   UpdateGeometry();
 }
 
-bool Player::IsColliding(CoordinatePair playerPos) {
-  float halfPlayer = size / 2;
-  vector<CoordinatePair> corners {
+// Requirement 1: Algorithm
+bool Player::IsColliding(CoordinatePair playerPos) { // Requirement 3: Input
+  float halfPlayer = size / 2; // Requirement 4: Variable
+  vector<CoordinatePair> corners { // Requirement 5: Array
     (playerPos + (CoordinatePair){halfPlayer, halfPlayer}),
     (playerPos + (CoordinatePair){halfPlayer, -halfPlayer}),
     (playerPos + (CoordinatePair){-halfPlayer, -halfPlayer}),
     (playerPos + (CoordinatePair){-halfPlayer, halfPlayer})
   };
-  for (int i = 0; i < corners.size(); i++) {
-    if (level->PosToData(corners.at(i)) == 1) {
-      return true;
+  for (int i = 0; i < corners.size(); i++) { // Requirement 7: Iteration
+    if (level->PosToData(corners.at(i)) == 1) { // Requirement 9: Control
+      return true; // Requirement 3: Output
     }
   }
-  return false;
+  return false; // Requirement 3: Output
 }
 
+// Requirement 1: Algorithm
 CoordinatePair Player::CorrectCollision(CoordinatePair playerPos) {
   CoordinatePair offset = {0,0};
   float halfPlayer = size / 2;
   float tileSize = level->tileSize;
-
   bool groundCheck = false;
-
-  CoordinatePair scale {0, 0};
 
   vector<CoordinatePair> corners {
     (playerPos + (CoordinatePair){halfPlayer, halfPlayer}),
@@ -233,9 +232,9 @@ void Player::UpdateVelocity(float deltaTime) {
     velocity.x *= 0.90;
   }
   if (velocity.y > 0) {
-    velocity.y -= 0.3;
+    velocity.y -= 4 * size;
   } else if (velocity.y < 0) {
-    velocity.y -= 0.3;
+    velocity.y -= 4 * size;
   }
 
   if (velocity.x > 0 && abs(velocity.x) > maxVel) {
