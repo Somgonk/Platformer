@@ -4,9 +4,7 @@
 
 ## Clone project
 ```
-git clone https://github.com/Somgonk/Platformer.git
-git submodule init
-git submodule update
+git clone https://github.com/Somgonk/Platformer.git --recurse-submodules
 ```
 
 ## Compile project
